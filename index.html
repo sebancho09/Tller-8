@@ -1,0 +1,196 @@
+[php]
+
+<?php
+session_start();
+?>
+
+<?php require_once("includes/connection.php"); ?>
+<?php include("includes/header.php"); ?>
+
+<?php
+
+if(isset($_SESSION["session_username"])){
+// echo "Session is set"; // for testing purposes
+header("Location: intropage.php");
+}
+
+if(isset($_POST["login"])){
+
+if(!empty($_POST[‘username’]) && !empty($_POST[‘password’])) {
+$username=$_POST[‘username’];
+$password=$_POST[‘password’];
+
+$query =mysql_query("SELECT * FROM usertbl WHERE username=’".$username."’ AND password=’".$password."’");
+
+$numrows=mysql_num_rows($query);
+if($numrows!=0)
+
+{
+while($row=mysql_fetch_assoc($query))
+{
+$dbusername=$row[‘username’];
+$dbpassword=$row[‘password’];
+}
+
+if($username == $dbusername && $password == $dbpassword)
+
+{
+
+$_SESSION[‘session_username’]=$username;
+
+/* Redirect browser */
+header("Location: intropage.php");
+}
+} else {
+
+$message = "Nombre de usuario ó contraseña invalida!";
+}
+
+} else {
+$message = "Todos los campos son requeridos!";
+}
+}
+?>
+
+
+</div>
+
+<?php include("includes/footer.php"); ?>
+
+<?php if (!empty($message)) {echo "<p class=\"error\">" . "MESSAGE: ". $message . "</p>";} ?>
+
+<?php require_once("includes/connection.php"); ?>
+<?php include("includes/header.php"); ?>
+
+<?php
+
+if(isset($_POST["register"])){
+
+if(!empty($_POST[‘full_name’]) && !empty($_POST[’email’]) && !empty($_POST[‘username’]) && !empty($_POST[‘password’])) {
+$full_name=$_POST[‘full_name’];
+$email=$_POST[’email’];
+$username=$_POST[‘username’];
+$password=$_POST[‘password’];
+$password=$_POST[‘confirmpassword’];
+$documento=$_POST[‘documento’];
+$tdocumento=$_POST[‘tdocumento’];
+
+$query=mysql_query("SELECT * FROM usertbl WHERE username=’".$username."’");
+$numrows=mysql_num_rows($query);
+
+if($numrows==0)
+{
+$sql="INSERT INTO usertbl
+(full_name, email, username,password)
+VALUES(‘$full_name’,’$email’, ‘$username’, ‘$password’)";
+
+$result=mysql_query($sql);
+
+if($result){
+$message = "Cuenta Correctamente Creada";
+} else {
+$message = "Error al ingresar datos de la informacion!";
+}
+
+} else {
+$message = "El nombre de usuario ya existe! Por favor, intenta con otro!";
+}
+
+} else {
+$message = "Todos los campos no deben de estar vacios!";
+}
+}
+?>
+
+<?php if (!empty($message)) {echo "<p class=\"error\">" . "Mensaje: ". $message . "</p>";} ?>
+
+<div class="container mregister">
+<div id="login">
+<h1>Registrar</h1>
+<form name="registerform" id="registerform" action="register.php" method="post">
+<p>
+<label for="user_login">Nombres<br />
+<input type="text" name="full_name" id="full_name" class="input" size="32" value="" /></label>
+</p>
+<p>
+<label for="user_login">Apellidos<br />
+<input type="text" name="full_name" id="full_name" class="input" size="32" value="" /></label>
+</p>
+<p>
+  
+<p>
+<label for="user_pass">Tipo Documento<br />
+  </label>
+          <li class="fila">
+          <select id="pais" name="pais" required="required">
+            <option value="">- Seleccione -</option>
+            <option value=>Tarjeta de identidad</option>
+            <option value=>C.C</option>
+            <option value=>Carné</option>
+<input type="text" name="username" id="username" class="input" value="" size="20" /></label>
+</p> 
+<p>
+<label for="user_pass">Documento<br />
+<input type="text" name="username" id="username" class="input" value="" size="20" /></label>
+</p>
+                   <label for="fecha">Fecha de nacimiento:</label>
+            <input type="date" name="fecha"> <br>
+
+            <br><br>
+<input type="email" name="email" id="email" class="input" value="" size="32" /></label>
+</p>
+  <label for="user_pass">Lugar nacimiento<br />
+<input type="email" name="email" id="email" class="input" value="" size="32" /></label>
+</p>
+<label for="user_pass">E-mail<br />
+<input type="email" name="email" id="email" class="input" value="" size="32" /></label>
+</p>
+<label for="user_pass">Telefono<br />
+<input type="email" name="email" id="email" class="input" value="" size="32" /></label>
+</p>
+<label for="user_pass">Usuario<br />
+<input type="email" name="email" id="email" class="input" value="" size="32" /></label>
+</p>
+<p>
+<label for="user_pass">Contraseña<br />
+<input type="password" name="password" id="password" class="input" value="" size="32" /></label>
+</p>
+  
+  <p>
+<label for="user_pass">Confirmar Contraseña<br />
+<input type="password" name="password" id="password" class="input" value="" size="32" /></label>
+</p>
+<label for="user_pass">Lugar de residencia<br />
+<input type="email" name="email" id="email" class="input" value="" size="32" /></label>
+</p>
+
+<p class="submit">
+<input type="submit" name="register" id="register" class="button" value="Registrar" />
+</p>
+
+
+</div>
+</div>
+
+<?php include("includes/footer.php"); ?>
+
+<?php
+session_start();
+if(!isset($_SESSION["session_username"])) {
+header("location:login.php");
+} else {
+?>
+
+<?php include("includes/header.php"); ?>
+<div id="welcome">
+<h2>Bienvenido, <span><?php echo $_SESSION[‘session_username’];?>! </span></h2>
+<p><a href="logout.php">Finalice</a> sesión aquí!</p>
+</div>
+
+<?php include("includes/footer.php"); ?>
+
+<?php
+}
+?>
+
+[/php]
